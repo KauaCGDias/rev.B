@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulado Unidade 2: Metodologias Ágeis</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #8e44ad;
+            --accent: #f1c40f;
+            --success: #27ae60;
+            --error: #c0392b;
+            --bg: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 4px solid var(--secondary);
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+        }
+
+        .scenario {
+            background: #f9f4fc;
+            border-left: 5px solid var(--secondary);
+            padding: 15px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .question-block {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .question-text {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option-label {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .option-label:hover { border-color: var(--secondary); background: #fdfbff; }
+
+        .correct { background-color: #d4edda !important; border-color: #28a745 !important; }
+        .incorrect { background-color: #f8d7da !important; border-color: #dc3545 !important; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 20px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #result {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Simulado: Metodologias Ágeis de Software</h1>
+        <p>Foco: Manifesto Ágil, Scrum, Kanban e XP (Unidade 2)</p>
+    </header>
+
+    <form id="quizForm">
+        <div id="questions-area"></div>
+        <button type="button" class="btn-submit" onclick="evaluateQuiz()">Finalizar Avaliação</button>
+    </form>
+
+    <div id="result"></div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            context: "Em 2001, um grupo de desenvolvedores escreveu o Manifesto Ágil para reagir à lentidão de processos antigos.",
+            q: "Um dos quatro pilares do Manifesto Ágil afirma que deve-se valorizar mais 'Indivíduos e interações' do que:",
+            options: ["Documentação abrangente.", "Processos e ferramentas.", "Seguir um plano.", "Negociação de contratos.", "Ferramentas de automação."],
+            correct: 1
+        },
+        {
+            context: "Uma equipe está com dificuldades pois o cliente exige seguir o contrato original, mesmo quando o mercado pede mudanças urgentes no produto.",
+            q: "Qual valor do Manifesto Ágil aborda diretamente a relação com o cliente nesta situação?",
+            options: ["Responder a mudanças mais do que seguir um plano.", "Software em funcionamento mais do que documentação.", "Colaboração com o cliente mais do que negociação de contratos.", "Indivíduos e interações mais do que processos.", "Qualidade técnica acima de tudo."],
+            correct: 2
+        },
+        {
+            context: "No Scrum, há um papel responsável por maximizar o valor do produto e gerenciar o Product Backlog.",
+            q: "Quem é o responsável por garantir que a equipe esteja trabalhando nas funcionalidades mais importantes para o negócio?",
+            options: ["Scrum Master.", "Stakeholders.", "Development Team.", "Product Owner (PO).", "Gerente de Projetos Tradicional."],
+            correct: 3
+        },
+        {
+            context: "A equipe de desenvolvimento percebe que obstáculos externos estão impedindo o progresso das tarefas durante a Sprint.",
+            q: "Qual papel no Scrum atua como um facilitador, removendo impedimentos e garantindo que o time siga os valores ágeis?",
+            options: ["Product Owner.", "Scrum Master.", "Tech Lead.", "CEO da empresa.", "Analista de Requisitos."],
+            correct: 1
+        },
+        {
+            context: "O time se reúne diariamente por 15 minutos para alinhar o trabalho e identificar bloqueios.",
+            q: "Qual é o nome deste evento e qual seu principal objetivo?",
+            options: ["Sprint Planning; planejar as próximas semanas.", "Sprint Review; demonstrar o software ao cliente.", "Daily Scrum; sincronizar atividades e identificar impedimentos.", "Retrospective; discutir melhorias no processo.", "Grooming; detalhar itens do backlog."],
+            correct: 2
+        },
+        {
+            context: "Ao final de um ciclo de trabalho, a equipe precisa inspecionar o incremento do produto.",
+            q: "Como se chama a cerimônia onde o software pronto é apresentado aos stakeholders para feedback?",
+            options: ["Sprint Retrospective.", "Daily Meeting.", "Sprint Review.", "Sprint Planning.", "Backlog Refinement."],
+            correct: 2
+        },
+        {
+            context: "Diferente de outros eventos, este foca no 'processo' e nas relações entre as pessoas, visando a melhoria contínua.",
+            q: "Estamos falando da:",
+            options: ["Sprint Planning.", "Daily Scrum.", "Sprint Retrospective.", "Release Planning.", "Review Meeting."],
+            correct: 2
+        },
+        {
+            context: "Uma fábrica de software deseja visualizar o fluxo de trabalho e limitar o trabalho em progresso (WIP) para evitar gargalos.",
+            q: "Qual metodologia utiliza cartões num quadro visual para gerenciar o fluxo através das colunas To Do, Doing e Done?",
+            options: ["Extreme Programming (XP).", "Scrum.", "Kanban.", "Cascata.", "Modelo Espiral."],
+            correct: 2
+        },
+        {
+            context: "O time XP (Extreme Programming) decidiu que todo código será escrito por dois desenvolvedores em um único computador.",
+            q: "Qual é o nome desta prática de engenharia do XP?",
+            options: ["Test Driven Development (TDD).", "Refatoração.", "Programação em Pares (Pair Programming).", "Integração Contínua.", "Design Simples."],
+            correct: 2
+        },
+        {
+            context: "No XP, defende-se que o código deve ser testado antes mesmo de ser escrito.",
+            q: "Qual prática garante que o código atenda aos requisitos e facilite mudanças futuras?",
+            options: ["Collective Ownership.", "Continuous Integration.", "Test Driven Development (TDD).", "Small Releases.", "Sustainable Pace."],
+            correct: 2
+        },
+        {
+            context: "Uma empresa utiliza Scrum, mas o Product Owner não consegue decidir a prioridade dos itens, gerando atrasos.",
+            q: "Segundo o material, qual é o impacto de um Backlog mal gerenciado em metodologias ágeis?",
+            options: ["Aumento da velocidade do time.", "Falta de foco no valor de negócio e desperdício de esforço.", "Melhoria na documentação técnica.", "Eliminação de reuniões diárias.", "Maior satisfação automática do cliente."],
+            correct: 1
+        },
+        {
+            context: "O conceito de 'Time Box' é fundamental no Scrum para manter a cadência.",
+            q: "Qual é a duração máxima recomendada para uma Sprint segundo a maioria das literaturas ágeis citadas?",
+            options: ["6 meses.", "1 semana.", "De 1 a 4 semanas.", "24 horas.", "Indeterminada, até acabar o código."],
+            correct: 2
+        },
+        {
+            context: "No Kanban, o conceito de 'Pull System' (Sistema Puxado) significa que:",
+            options: ["O gestor empurra tarefas para os desenvolvedores.", "Novas tarefas só entram em 'Doing' quando houver capacidade disponível.", "O cliente decide a data exata da entrega final.", "A equipe deve trabalhar 12 horas por dia.", "O código é puxado do servidor automaticamente."],
+            correct: 1
+        },
+        {
+            context: "O Manifesto Ágil prefere 'Software em funcionamento' acima de:",
+            options: ["Pessoas felizes.", "Contratos lucrativos.", "Documentação abrangente.", "Ferramentas caras.", "Testes unitários."],
+            correct: 2
+        },
+        {
+            context: "Uma equipe XP percebe que o código está ficando complexo demais e decide limpá-lo sem alterar o comportamento externo.",
+            q: "Esta prática é chamada de:",
+            options: ["Codificação Rápida.", "Refatoração (Refactoring).", "Debug.", "Compilação.", "Deploy."],
+            correct: 1
+        },
+        {
+            context: "O Time de Desenvolvimento no Scrum deve ser 'Cross-functional'.",
+            q: "Isso significa que o time:",
+            options: ["Deve ter membros de diferentes empresas.", "Possui todas as habilidades necessárias para criar um incremento pronto.", "É composto apenas por gerentes.", "Deve trocar de membros toda semana.", "Trabalha em cidades diferentes."],
+            correct: 1
+        },
+        {
+            context: "O Backlog do Produto é uma lista dinâmica.",
+            q: "O que acontece com o Backlog quando novos requisitos surgem durante o projeto?",
+            options: ["É proibido adicionar novos itens.", "O projeto é cancelado.", "O Product Owner atualiza e reprioriza a lista.", "A equipe de desenvolvimento ignora as mudanças.", "O Scrum Master deve punir quem sugeriu a mudança."],
+            correct: 2
+        },
+        {
+            context: "O valor 'Simplicidade' no XP é definido como:",
+            options: ["Não fazer nada.", "Maximizar a quantidade de trabalho não feito (focar no essencial).", "Escrever código sem comentários.", "Usar linguagens de programação antigas.", "Ignorar a interface do usuário."],
+            correct: 1
+        },
+        {
+            context: "A 'Integração Contínua' visa evitar o 'inferno da integração'.",
+            q: "Com que frequência a equipe deve integrar o código no repositório principal?",
+            options: ["Uma vez por mês.", "Apenas no final do projeto.", "Várias vezes ao dia.", "Somente quando o cliente pedir.", "Apenas quando houver erros."],
+            correct: 2
+        },
+        {
+            context: "Ao final de uma Sprint, o incremento deve estar 'Done' (Pronto).",
+            q: "O que define se um item está realmente pronto para ser entregue?",
+            options: ["A vontade do desenvolvedor.", "A Definition of Done (DoD) acordada pelo time.", "O término do horário comercial.", "A falta de bugs visíveis apenas na tela inicial.", "O fato de o código ter compilado uma vez."],
+            correct: 1
+        }
+    ];
+
+    function renderQuiz() {
+        const container = document.getElementById('questions-area');
+        quizData.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = 'question-block';
+            div.innerHTML = `
+                <div class="scenario"><strong>Contexto:</strong> ${item.context}</div>
+                <span class="question-text">${idx + 1}. ${item.q}</span>
+                <div class="options">
+                    ${item.options.map((opt, i) => `
+                        <label class="option-label" id="label-${idx}-${i}">
+                            <input type="radio" name="q${idx}" value="${i}"> ${String.fromCharCode(65 + i)}) ${opt}
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function evaluateQuiz() {
+        let score = 0;
+        quizData.forEach((item, idx) => {
+            const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+            const correctIdx = item.correct;
+
+            if (selected) {
+                const val = parseInt(selected.value);
+                if (val === correctIdx) {
+                    score++;
+                    document.getElementById(`label-${idx}-${val}`).classList.add('correct');
+                } else {
+                    document.getElementById(`label-${idx}-${val}`).classList.add('incorrect');
+                    document.getElementById(`label-${idx}-${correctIdx}`).classList.add('correct');
+                }
+            } else {
+                document.getElementById(`label-${idx}-${correctIdx}`).classList.add('correct');
+            }
+        });
+
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `<h2>Simulado Concluído</h2><p>Você acertou ${score} de 20 questões.</p>`;
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    renderQuiz();
+</script>
+
+</body>
+</html>
